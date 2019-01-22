@@ -178,10 +178,10 @@ default)
 template <
     template<typename U, typename V, typename... Args> class ObjectType = std::map,
     template<typename U, typename... Args> class ArrayType = std::vector,
-    class StringType = std::string,
+    class StringType = std::wstring,
     class BooleanType = bool,
-    class NumberIntegerType = int64_t,
-    class NumberFloatType = double,
+    class NumberIntegerType = int32_t,
+    class NumberFloatType = float,
     template<typename U> class AllocatorType = std::allocator
     >
 class basic_json
