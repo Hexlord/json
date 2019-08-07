@@ -178,10 +178,10 @@ default)
 template <
     template<typename U, typename V, typename... Args> class ObjectType = std::map,
     template<typename U, typename... Args> class ArrayType = std::vector,
-    class StringType = std::wstring,
+    class StringType = std::string,
     class BooleanType = bool,
-    class NumberIntegerType = int32_t,
-    class NumberFloatType = float,
+    class NumberIntegerType = int64_t,
+    class NumberFloatType = double,
     template<typename U> class AllocatorType = std::allocator
     >
 class basic_json
@@ -7546,12 +7546,23 @@ basic_json_parser_64:
             {
                 case lexer::token_type::begin_object:
                 {
-                    if (keep and (not callback or (keep = callback(depth++, parse_event_t::object_start, result))))
-                    {
-                        // explicitly set result to object to cope with {}
-                        result.m_type = value_t::object;
-                        result.m_value = json_value(value_t::object);
-                    }
+					if (keep)
+					{
+						if (!callback)
+						{
+							result.m_type = value_t::object;
+							result.m_value = json_value(value_t::object);
+						}
+						else
+						{
+							keep = callback(depth++, parse_event_t::object_start, result);
+							if (keep)
+							{
+								result.m_type = value_t::object;
+								result.m_value = json_value(value_t::object);
+							}
+						}
+					}
 
                     // read next token
                     get_token();
@@ -7624,13 +7635,25 @@ basic_json_parser_64:
 
                 case lexer::token_type::begin_array:
                 {
-                    if (keep and (not callback or (keep = callback(depth++, parse_event_t::array_start, result))))
-                    {
-                        // explicitly set result to object to cope with []
-                        result.m_type = value_t::array;
-                        result.m_value = json_value(value_t::array);
-                    }
 
+					if (keep)
+					{
+						if (!callback)
+						{
+							result.m_type = value_t::array;
+							result.m_value = json_value(value_t::array);
+						}
+						else
+						{
+							keep = callback(depth++, parse_event_t::array_start, result);
+							if (keep)
+							{
+								result.m_type = value_t::array;
+								result.m_value = json_value(value_t::array);
+							}
+						}
+					}
+					
                     // read next token
                     get_token();
 
